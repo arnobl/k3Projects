@@ -8,11 +8,11 @@ import org2.kermeta.kompren.slicer.Slicer
 
 @Aspect(className=typeof(Slicer)) class SlicerAspect {
 	public def List<SlicedClass> slicedClasses() {
-		return self.slicedElements.filter(typeof(SlicedClass)).toList
+		return _self.slicedElements.filter(typeof(SlicedClass)).toList
 	}
 	
 	
 	public def List<SlicedProperty> slicedProperties() {
-		return self.slicedElements.filter(typeof(SlicedProperty)).toList
+		return _self.slicedElements.filter(typeof(SlicedProperty)).toList
 	}
 }

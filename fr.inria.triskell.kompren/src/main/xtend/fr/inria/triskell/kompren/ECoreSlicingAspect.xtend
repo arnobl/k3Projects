@@ -14,18 +14,18 @@ import org2.kermeta.kompren.slicer.SlicedProperty
 
 @Aspect(className=typeof(EStructuralFeature)) class EStructuralFeatureAspectName {
 	public def String getValidKermetaName() {
-		var result = self.name
+		var result = _self.name
 		
-		if(self.name.equals("result") || self.name.equals("is") || self.name.equals("class") || self.name.equals("aspect") ||
-			self.name.equals("inherits") || self.name.equals("do") || self.name.equals("value") || self.name.equals("if") ||
-			self.name.equals("then") || self.name.equals("else") || self.name.equals("loop") || self.name.equals("until") ||
-			self.name.equals("operation") || self.name.equals("method") || self.name.equals("end") || self.name.equals("reference") ||
-			self.name.equals("attribute") || self.name.equals("package") || self.name.equals("using") || self.name.equals("require") ||
-			self.name.equals("self") || self.name.equals("bag") || self.name.equals("Void") || self.name.equals("not") || self.name.equals("oset") ||
-			self.name.equals("from") || self.name.equals("super") || self.name.equals("init") || self.name.equals("true") || self.name.equals("false") ||
-			self.name.equals("var") || self.name.equals("raise") || self.name.equals("rescue") || self.name.equals("getter") || self.name.equals("pre") || self.name.equals("post") ||
-			self.name.equals("setter") || self.name.equals("property") || self.name.equals("abstract") || self.name.equals("enumeration") || self.name.equals("metamodel") ||
-			self.name.equals("set") || self.name.equals("inv") || self.name.equals("extern"))
+		if(_self.name.equals("result") || _self.name.equals("is") || _self.name.equals("class") || _self.name.equals("aspect") ||
+			_self.name.equals("inherits") || _self.name.equals("do") || _self.name.equals("value") || _self.name.equals("if") ||
+			_self.name.equals("then") || _self.name.equals("else") || _self.name.equals("loop") || _self.name.equals("until") ||
+			_self.name.equals("operation") || _self.name.equals("method") || _self.name.equals("end") || _self.name.equals("reference") ||
+			_self.name.equals("attribute") || _self.name.equals("package") || _self.name.equals("using") || _self.name.equals("require") ||
+			_self.name.equals("self") || _self.name.equals("bag") || _self.name.equals("Void") || _self.name.equals("not") || _self.name.equals("oset") ||
+			_self.name.equals("from") || _self.name.equals("super") || _self.name.equals("init") || _self.name.equals("true") || _self.name.equals("false") ||
+			_self.name.equals("var") || _self.name.equals("raise") || _self.name.equals("rescue") || _self.name.equals("getter") || _self.name.equals("pre") || _self.name.equals("post") ||
+			_self.name.equals("setter") || _self.name.equals("property") || _self.name.equals("abstract") || _self.name.equals("enumeration") || _self.name.equals("metamodel") ||
+			_self.name.equals("set") || _self.name.equals("inv") || _self.name.equals("extern"))
 			result = "~" + result
 			
 		return result
@@ -38,7 +38,7 @@ class EClassifierAspectName {
 	public var List<SlicedProperty> outputFocusedRelations = null
 
 	public def String getVarNameClassifier() {
-		return self.getVarName(self.name, false)
+		return _self.getVarName(_self.name, false)
 	}
 
 
@@ -49,10 +49,10 @@ class EClassifierAspectName {
 	}
 
 	public def String getRequiredAttributeName() {
-		return "required" + self.name + "s"
+		return "required" + _self.name + "s"
 	}
 
 	public def String getAddedAttributeName() {
-		return "added" + self.name + "s"
+		return "added" + _self.name + "s"
 	}
 }

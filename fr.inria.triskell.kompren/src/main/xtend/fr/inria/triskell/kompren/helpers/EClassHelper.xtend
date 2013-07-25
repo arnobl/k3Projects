@@ -12,22 +12,21 @@ import org.eclipse.emf.ecore.EClassifier
 import org.eclipse.emf.ecore.EClass
 import java.util.List
 import org.eclipse.emf.ecore.EReference
-import java.util.ArrayList
 
 
 
 @Aspect(className=typeof(ENamedElement)) class ENamedElementAspectQName {
 	public def String getQualifiedName(String sep) {
-		var result = self.name
+		var result = _self.name
 		
-		if(self.eContainer!=null && self.eContainer instanceof ENamedElement)
-			result = (self.eContainer as ENamedElement).getQualifiedName(sep) + sep + self.name 
+		if(_self.eContainer!=null && _self.eContainer instanceof ENamedElement)
+			result = (_self.eContainer as ENamedElement).getQualifiedName(sep) + sep + _self.name 
 		
 		return result
 	}
 	
 	public def String getQualifiedName(){
-		return self.getQualifiedName("::")
+		return _self.getQualifiedName("::")
 	}
 }
 
@@ -39,15 +38,13 @@ import java.util.ArrayList
 	*/
 	public def boolean isSuperTypeOfBis(EClass clazz) {
 		var result = clazz!=null
-		val qualifiedName = self.getQualifiedName
-		val List<EClass> superTypes = clazz.getESuperTypes//workaround k3
+		val qualifiedName = _self.getQualifiedName
 		
-		
-		if(result){//FIXME xtend
-			result = superTypes.exists[st | st.getQualifiedName.equals(qualifiedName) ]
+		if(result){
+			result = clazz.getESuperTypes.exists[st | st.getQualifiedName.equals(qualifiedName) ]
 
 			if(!result)
-				result = superTypes.exists[st | self.isSuperTypeOfBis(st)]
+				result = clazz.getESuperTypes.exists[st | _self.isSuperTypeOfBis(st)]
 		}
 		
 		return result
@@ -57,21 +54,18 @@ import java.util.ArrayList
 
 @Aspect(className=typeof(EClass)) class EClassAspectQName extends EClassifierAspectQName {
 	public def List<EClass> getConcreteSubClasses(List<EClass> allClasses) {
-		val List<EClass> classes = allClasses//workaround k3
-		return classes.filter[c | !c.isAbstract && self.isSuperTypeOfBis(self, c)].toList
+		return allClasses.filter[c | !c.isAbstract && _self.isSuperTypeOfBis(c)].toList
 	}
 
 
 	public def boolean canBeRootClass(List<EClass> allClasses) {
-		val List<EClass> classes = allClasses//workaround k3
-		
-		return !self.abstract && 
-			self.EStructuralFeatures.exists[st | st instanceof EReference && (st as EReference).containment] &&
-			!classes.exists[clazz | self!=clazz && clazz.hasStructFeatureWithType(self)]
+		return !_self.abstract && 
+			_self.EStructuralFeatures.exists[st | st instanceof EReference && (st as EReference).containment] &&
+			!allClasses.exists[clazz | self!=clazz && clazz.hasStructFeatureWithType(_self)]
 	}
 	
 	public def boolean hasStructFeatureWithType(EClass clazz) {
-		return self.EStructuralFeatures.filter(typeof(EReference)).exists[st | st.containment &&
+		return _self.EStructuralFeatures.filter(typeof(EReference)).exists[st | st.containment &&
 		 	(st.EType.getQualifiedName.equals(clazz.getQualifiedName) || (st.EType instanceof EClass && (st.EType as EClass).isSuperTypeOfBis(clazz)))
  		]
 	}

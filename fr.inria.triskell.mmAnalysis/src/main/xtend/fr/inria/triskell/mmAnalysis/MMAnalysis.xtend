@@ -3,15 +3,15 @@ package fr.inria.triskell.mmAnalysis
 import fr.inria.triskell.k3.Aspect
 import fr.inria.triskell.k3.OverrideAspectMethod
 import org.eclipse.emf.common.util.URI
+import org.eclipse.emf.ecore.EcorePackage
 import org.eclipse.emf.ecore.resource.Resource
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl
 import org.eclipse.emf.ecore.xmi.impl.EcoreResourceFactoryImpl
 import static extension fr.inria.triskell.mmAnalysis.EPackageAspect.*
 import org.eclipse.emf.ecore.EModelElement
 import org.eclipse.emf.ecore.EPackage
-import org.eclipse.emf.ecore.EClass
 import org.eclipse.emf.ecore.EDataType
-import org.eclipse.emf.ecore.EcorePackage
+import org.eclipse.emf.ecore.EClass
 
 
 class MMAnalysis{
@@ -52,7 +52,7 @@ class ContextAnalysis {
 
 @Aspect(className=typeof(EModelElement))
 class EModelElementAspect {
-	public def void count(ContextAnalysis ctx) {println("AIE: " + self)}
+	public def void count(ContextAnalysis ctx) {println("AIE: " + _self)}
 }
 
 
@@ -60,7 +60,7 @@ class EModelElementAspect {
 class EClassAspect extends EModelElementAspect {
 	@OverrideAspectMethod
 	public def void count(ContextAnalysis ctx) {
-		println(self.name)
+		println(_self.name)
 		ctx.nbClasses = ctx.nbClasses + 1
 	}
 }
@@ -69,7 +69,7 @@ class EClassAspect extends EModelElementAspect {
 class EDataTypeAspect extends EModelElementAspect {
 	@OverrideAspectMethod
 	public def void count(ContextAnalysis ctx) {
-		println(self.name)
+		println(_self.name)
 		ctx.nbDataTypes = ctx.nbDataTypes + 1
 	}
 }
@@ -80,8 +80,8 @@ class EPackageAspect extends EModelElementAspect {
 	@OverrideAspectMethod
 	public def void count(ContextAnalysis ctx) {
 		ctx.nbPackages = ctx.nbPackages + 1
-		self.EClassifiers.forEach[count(ctx)]
-		self.ESubpackages.forEach[count(ctx)]
+		_self.EClassifiers.forEach[count(ctx)]
+		_self.ESubpackages.forEach[count(ctx)]
 	}
 }
 

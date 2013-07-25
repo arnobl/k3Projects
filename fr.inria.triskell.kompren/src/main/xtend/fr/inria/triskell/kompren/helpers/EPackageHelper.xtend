@@ -14,13 +14,13 @@ import org.eclipse.emf.ecore.EReference
 
 @Aspect(className=typeof(EPackage)) class EPackageAspectAll {
 	public def List<EClass> getAllClasses(){
-		return self.EClassifiers.filter(typeof(EClass)).toList
+		return _self.EClassifiers.filter(typeof(EClass)).toList
 	}
 	
 	
 	public def List<EReference> getAllReferences(){
-		val result = self.getAllClasses.map[EStructuralFeatures.filter(typeof(EReference)).filter[!derived]].flatten.toList
-		result.addAll(self.ESubpackages.map[getAllReferences].flatten.toList)
+		val result = _self.getAllClasses.map[EStructuralFeatures.filter(typeof(EReference)).filter[!derived]].flatten.toList
+		result.addAll(_self.ESubpackages.map[getAllReferences].flatten.toList)
 		return result
 	} 
 }
