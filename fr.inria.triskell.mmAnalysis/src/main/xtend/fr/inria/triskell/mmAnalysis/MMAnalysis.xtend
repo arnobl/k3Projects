@@ -26,7 +26,7 @@ class MMAnalysis{
 		var uri = URI.createURI("fsm.ecore")
 		val res = rs.getResource(uri, true);
 		val ctx = new ContextAnalysis
-		res.contents.filter(typeof(EModelElement)).forEach[pkg | pkg.count(ctx)]
+		res.contents.filter(typeof(EPackage)).forEach[pkg | pkg.count(ctx)]
 		res.unload
 		println(ctx)
 	}
