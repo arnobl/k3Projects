@@ -82,4 +82,17 @@
 			<version>2.8.0-v20120911-0500</version>
 		</dependency>
 	</dependencies>
+	
+	<distributionManagement>
+	    <repository>
+	        <id>mavenInriaRelease</id>
+	        <name>http://maven.inria.fr-releases</name>
+	        <url>http://maven.inria.fr/artifactory/kermeta-public-release</url>
+	    </repository>
+	    <snapshotRepository>
+	        <id>mavenInriaSnapshot</id>
+	        <name>http://maven.inria.fr-snapshots</name>
+	        <url>http://maven.inria.fr/artifactory/kermeta-public-snapshot</url>
+	    </snapshotRepository>
+	</distributionManagement>
 </project>
