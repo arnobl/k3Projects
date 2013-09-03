@@ -4,10 +4,13 @@ import fr.inria.triskell.k3.Aspect
 import fr.inria.triskell.k3.OverrideAspectMethod
 import org.eclipse.ocl.ecore.AssociationClassCallExp
 import org.eclipse.ocl.ecore.CallExp
+import org.eclipse.ocl.ecore.CallOperationAction
 import org.eclipse.ocl.ecore.CollectionItem
 import org.eclipse.ocl.ecore.CollectionLiteralExp
 import org.eclipse.ocl.ecore.CollectionLiteralPart
 import org.eclipse.ocl.ecore.CollectionRange
+import org.eclipse.ocl.ecore.Constraint
+import org.eclipse.ocl.ecore.EnumLiteralExp
 import org.eclipse.ocl.ecore.ExpressionInOCL
 import org.eclipse.ocl.ecore.FeatureCallExp
 import org.eclipse.ocl.ecore.IfExp
@@ -21,6 +24,7 @@ import org.eclipse.ocl.ecore.NavigationCallExp
 import org.eclipse.ocl.ecore.OCLExpression
 import org.eclipse.ocl.ecore.OperationCallExp
 import org.eclipse.ocl.ecore.PropertyCallExp
+import org.eclipse.ocl.ecore.SendSignalAction
 import org.eclipse.ocl.ecore.StateExp
 import org.eclipse.ocl.ecore.TupleLiteralExp
 import org.eclipse.ocl.ecore.TupleLiteralPart
@@ -28,10 +32,6 @@ import org.eclipse.ocl.ecore.TypeExp
 import org.eclipse.ocl.ecore.Variable
 import org.eclipse.ocl.ecore.VariableExp
 import org.eclipse.ocl.utilities.TypedElement
-import org.eclipse.ocl.ecore.EnumLiteralExp
-import org.eclipse.ocl.ecore.CallOperationAction
-import org.eclipse.ocl.ecore.SendSignalAction
-import org.eclipse.ocl.ecore.Constraint
 
 @Aspect(className=typeof(Object))
 abstract class SlicerVisitor {
@@ -68,7 +68,8 @@ class ExpressionInOCLAspect extends SlicerVisitor {
 		_self.contextVariable.visitToAddClasses(theOCLSlicer)
 		if(_self.resultVariable!=null) _self.resultVariable.visitToAddClasses(theOCLSlicer)
 		_self.parameterVariable.forEach[visitToAddClasses(theOCLSlicer)]
-		theOCLSlicer.classifiers.addAll(_self.generatedType)
+//		theOCLSlicer.classifiers.addAll()
+//		_self.generatedType
 	}
 }
 
@@ -201,7 +202,7 @@ class SendSignalActionAspect extends SlicerVisitor {
 	@OverrideAspectMethod
 	def void visitToAddClasses(OCLSlicer theOCLSlicer) {
 		_self.super_visitToAddClasses(theOCLSlicer)
-		theOCLSlicer.classes.add(_self.class)
+		theOCLSlicer.classes.add(_self.signal)
 	}
 }
 
@@ -307,6 +308,6 @@ class ConstraintAspect extends SlicerVisitor {
 	def void visitToAddClasses(OCLSlicer theOCLSlicer) {
 		_self.super_visitToAddClasses(theOCLSlicer)
 		_self.specification.visitToAddClasses(theOCLSlicer)
-		theOCLSlicer.elts.addAll(_self.constrainedElements)
+		_self.constrainedElements.forEach[elt | theOCLSlicer.elts.add(elt)]
 	}
 }

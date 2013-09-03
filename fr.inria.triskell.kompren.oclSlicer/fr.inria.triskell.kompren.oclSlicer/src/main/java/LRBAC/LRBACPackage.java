@@ -39,7 +39,7 @@ public interface LRBACPackage extends EPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	String eNS_URI = "http:///BlankModel.ecore";
+	String eNS_URI = "http://BlankModel/LRBAC";
 
 	/**
 	 * The package namespace name.
