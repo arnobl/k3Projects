@@ -32,6 +32,7 @@ import org.eclipse.ocl.ecore.TypeExp
 import org.eclipse.ocl.ecore.Variable
 import org.eclipse.ocl.ecore.VariableExp
 import org.eclipse.ocl.utilities.TypedElement
+import org.eclipse.emf.ecore.EObject
 
 @Aspect(className=typeof(Object))
 abstract class SlicerVisitor {
@@ -80,6 +81,12 @@ abstract class OCLExpressionAspect extends TypedElementAspect {
 
 @Aspect(className=typeof(TypedElement))
 abstract class TypedElementAspect extends SlicerVisitor {
+	@OverrideAspectMethod
+	def void visitToAddClasses(OCLSlicer theOCLSlicer) {
+//		_self.super_visitToAddClasses(theOCLSlicer)
+		val EObject obj = _self.type as EObject
+		theOCLSlicer.objects.add(obj)
+	}
 }
 
 @Aspect(className=typeof(CallExp))
