@@ -16,14 +16,13 @@ import org.eclipse.emf.ecore.EEnum
 import org.eclipse.emf.ecore.EEnumLiteral
 import org.eclipse.emf.ecore.EFactory
 import org.eclipse.emf.ecore.EModelElement
+import org.eclipse.emf.ecore.EOperation
 import org.eclipse.emf.ecore.EPackage
 import org.eclipse.emf.ecore.EcorePackage
 import org.eclipse.emf.ecore.resource.Resource
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl
+import org.eclipse.emf.ecore.util.Diagnostician
 import org.eclipse.emf.ecore.xmi.impl.EcoreResourceFactoryImpl
-
-import static extension fr.inria.triskell.mmAnalysis.EModelElementAspect.*
-import org.eclipse.emf.ecore.EOperation
 
 class MMAnalysis{
 	public def run() {
@@ -33,7 +32,6 @@ class MMAnalysis{
 			EPackage.Registry.INSTANCE.put(EcorePackage.eNS_URI, EcorePackage.eINSTANCE)
 		Resource.Factory.Registry.INSTANCE.getExtensionToFactoryMap().put("ecore", fact)
 		val ctx = new ContextAnalysis
-//		val rs = new ResourceSetImpl()
 //		val uri = URI.createURI("fsm.ecore")
 //		val res = rs.getResource(uri, true);
 //		res.contents.filter(typeof(EPackage)).forEach[count(ctx)]
@@ -41,25 +39,51 @@ class MMAnalysis{
 //		res.unload
 //		println(ctx)
 		
-		val DirectoryStream<Path> ds = Files.newDirectoryStream(FileSystems.getDefault().getPath("/home/ablouin/data/dev/metamodels/metamodels"))
-		
-		ds.forEach[file |
-			try{
-				val rs = new ResourceSetImpl()
-				val uri = URI.createURI(file.toString)
-				val res = rs.getResource(uri, true);
-				ctx.nextMetamodel(file.fileName.toString)
-				res.contents.filter(typeof(EPackage)).forEach[count(ctx)]
-				ctx.writeDataMM
-				res.unload
-			}catch(Exception e) {
-				println("ERR>>>>" + file.toString)
-				e.printStackTrace
-			}
-		]
+//		val errFolder = "/home/ablouin/data/dev/metamodels/v2/metamodels/sample2-notloadable/"
+//		val nonValidFolder = "/media/data/dev/metamodels/v2/metamodels/sample1-remaining/notValid"
+		val DirectoryStream<Path> ds = Files.newDirectoryStream(FileSystems.getDefault().getPath("/home/ablouin/data/dev/metamodels/v2/metamodels/metamodels-sample1"))
+		ds.forEach[file | analyseDir(ctx, file)	]
 		ds.close
 //		println(ctx)
-		ctx.write
+//		ctx.write
+	}
+	
+	
+	def void analyseDir(ContextAnalysis ctx, Path file) {
+		if(Files.isDirectory(file)) {
+			val DirectoryStream<Path> ds = Files.newDirectoryStream(file)
+			ds.forEach[f | analyseDir(ctx, f)]
+			ds.close
+		}else {
+			try {
+				val uri = URI.createURI(file.toString)
+				val rs = new ResourceSetImpl()
+				val res = rs.getResource(uri, true)
+				ctx.nextMetamodel(file.fileName.toString)
+//				res.contents.filter(typeof(EPackage)).forEach[count(ctx)]
+				res.contents.filter(typeof(EPackage)).forEach[p | 
+					try {
+					Diagnostician.INSTANCE.validate(p)
+					}catch(Exception e) {
+						println("NOT VALID>>>> " +file.toString)
+						val str = file.parent.toString.replace("/metamodels-sample1/", "/sample3-notValid/")
+						Files.createDirectories(FileSystems.getDefault.getPath(str))
+						Files.move(file, FileSystems.getDefault.getPath(str, file.fileName.toString))
+//							ctx.incrNonValidMM
+					}
+				]
+					println("OK>>>"+file.fileName.toString)
+	//				ctx.writeDataMM
+				res.unload
+			}catch(Exception e) {
+	//				println("ERR>>>"+file.fileName.toString)
+//				val str = file.parent.toString.replace("/metamodels-sample1/", "/sample3-notValid/")
+//				println(str)
+//				Files.createDirectories(FileSystems.getDefault.getPath(str))
+//				Files.move(file, FileSystems.getDefault.getPath(str, file.fileName.toString))
+	//			e.printStackTrace
+			}
+		}
 	}
 
 
