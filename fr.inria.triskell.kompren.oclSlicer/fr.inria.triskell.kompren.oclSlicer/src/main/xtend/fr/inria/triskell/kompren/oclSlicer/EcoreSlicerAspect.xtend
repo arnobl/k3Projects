@@ -26,7 +26,12 @@ abstract class EcoreSlicerVisitor {
 	
 	protected var EModelElement clonedElt = null//FIXME generics
 
-	def void visitToAddClasses(EcoreSlicer theEcoreSlicer) { }
+	def void visitToAddClasses(EcoreSlicer theEcoreSlicer) {
+		if(!_self.sliced) {
+			_self.sliced = true
+			_self._visitToAddClasses(theEcoreSlicer)
+		}
+	}
 	
 	protected def void _visitToAddClasses(EcoreSlicer theEcoreSlicer) { }
 	
@@ -60,14 +65,6 @@ abstract class EClassifierAspect extends ENamedElementAspect{
 @Aspect(className=typeof(EClass))
 class EClassAspect extends EClassifierAspect {
 	Set<EClass> subClasses = new HashSet
-	
-	@OverrideAspectMethod
-	def void visitToAddClasses(EcoreSlicer theEcoreSlicer) {
-		if(!_self.sliced) {
-			_self.sliced = true
-			_self._visitToAddClasses(theEcoreSlicer)
-		}
-	}
 	
 	@OverrideAspectMethod
 	protected def void _visitToAddClasses(EcoreSlicer theEcoreSlicer) {
@@ -107,14 +104,6 @@ abstract class ENamedElementAspect extends EModelElementAspect {
 @Aspect(className=typeof(EPackage))
 class EPackageAspect extends ENamedElementAspect {
 	@OverrideAspectMethod
-	def void visitToAddClasses(EcoreSlicer theEcoreSlicer) {
-		if(!_self.sliced) {
-			_self.sliced = true
-			_self._visitToAddClasses(theEcoreSlicer)
-		}
-	}
-	
-	@OverrideAspectMethod
 	def void initOpposites() {
 		_self.EClassifiers.forEach[initOpposites]
 		_self.ESubpackages.forEach[initOpposites]
@@ -137,14 +126,6 @@ class EPackageAspect extends ENamedElementAspect {
 @Aspect(className=typeof(EDataType))
 class EDataTypeAspect extends EClassifierAspect {
 	@OverrideAspectMethod
-	def void visitToAddClasses(EcoreSlicer theEcoreSlicer) {
-		if(!_self.sliced) {
-			_self.sliced = true
-			_self._visitToAddClasses(theEcoreSlicer)
-		}
-	}
-	
-	@OverrideAspectMethod
 	protected def void _visitToAddClasses(EcoreSlicer theEcoreSlicer) {
 		if(_self.clonedElt==null) _self.clonedElt = EcoreFactoryImpl.eINSTANCE.createEDataType
 		val obj = _self.clonedElt as EDataType//FIXME
@@ -158,14 +139,6 @@ class EDataTypeAspect extends EClassifierAspect {
 @Aspect(className=typeof(EEnum))
 class EENumAspect extends EDataTypeAspect {
 	@OverrideAspectMethod
-	def void visitToAddClasses(EcoreSlicer theEcoreSlicer) {
-		if(!_self.sliced) {
-			_self.sliced = true
-			_self._visitToAddClasses(theEcoreSlicer)
-		}
-	}
-	
-	@OverrideAspectMethod
 	protected def void _visitToAddClasses(EcoreSlicer theEcoreSlicer) {
 		_self.clonedElt = EcoreFactoryImpl.eINSTANCE.createEEnum
 		_self.super__visitToAddClasses(theEcoreSlicer)
@@ -175,14 +148,6 @@ class EENumAspect extends EDataTypeAspect {
 
 @Aspect(className=typeof(EEnumLiteral))
 class EENumLiteralAspect extends ENamedElementAspect {
-	@OverrideAspectMethod
-	def void visitToAddClasses(EcoreSlicer theEcoreSlicer) {
-		if(!_self.sliced) {
-			_self.sliced = true
-			_self._visitToAddClasses(theEcoreSlicer)
-		}
-	}
-	
 	@OverrideAspectMethod
 	protected def void _visitToAddClasses(EcoreSlicer theEcoreSlicer) {
 		_self.clonedElt = EcoreFactoryImpl.eINSTANCE.createEEnumLiteral
@@ -218,14 +183,6 @@ abstract class ETypedElementAspect extends ENamedElementAspect {
 @Aspect(className=typeof(EOperation))
 class EOperationAspect extends ETypedElementAspect {
 	@OverrideAspectMethod
-	def void visitToAddClasses(EcoreSlicer theEcoreSlicer) {
-		if(!_self.sliced) {
-			_self.sliced = true
-			_self._visitToAddClasses(theEcoreSlicer)
-		}
-	}
-	
-	@OverrideAspectMethod
 	protected def void _visitToAddClasses(EcoreSlicer theEcoreSlicer) {
 		_self.clonedElt = EcoreFactoryImpl.eINSTANCE.createEOperation
 		val obj = _self.clonedElt as EOperation
@@ -244,14 +201,6 @@ class EOperationAspect extends ETypedElementAspect {
 @Aspect(className=typeof(EAttribute))
 class EAttributeAspect extends EStructuralFeatureAspect {
 	@OverrideAspectMethod
-	def void visitToAddClasses(EcoreSlicer theEcoreSlicer) {
-		if(!_self.sliced) {
-			_self.sliced = true
-			_self._visitToAddClasses(theEcoreSlicer)
-		}
-	}
-	
-	@OverrideAspectMethod
 	protected def void _visitToAddClasses(EcoreSlicer theEcoreSlicer) {
 		_self.clonedElt = EcoreFactoryImpl.eINSTANCE.createEAttribute
 		_self.super__visitToAddClasses(theEcoreSlicer)
@@ -263,14 +212,6 @@ class EAttributeAspect extends EStructuralFeatureAspect {
 @Aspect(className=typeof(EParameter))
 class EParameterAspect extends ETypedElementAspect {
 	@OverrideAspectMethod
-	def void visitToAddClasses(EcoreSlicer theEcoreSlicer) {
-		if(!_self.sliced) {
-			_self.sliced = true
-			_self._visitToAddClasses(theEcoreSlicer)
-		}
-	}
-	
-	@OverrideAspectMethod
 	protected def void _visitToAddClasses(EcoreSlicer theEcoreSlicer) {
 		_self.clonedElt = EcoreFactoryImpl.eINSTANCE.createEParameter
 		_self.super__visitToAddClasses(theEcoreSlicer)
@@ -281,14 +222,6 @@ class EParameterAspect extends ETypedElementAspect {
 
 @Aspect(className=typeof(EReference))
 class EReferenceAspect extends EStructuralFeatureAspect {
-	@OverrideAspectMethod
-	def void visitToAddClasses(EcoreSlicer theEcoreSlicer) {
-		if(!_self.sliced) {
-			_self.sliced = true
-			_self._visitToAddClasses(theEcoreSlicer)
-		}
-	}
-	
 	@OverrideAspectMethod
 	protected def void _visitToAddClasses(EcoreSlicer theEcoreSlicer) {
 		_self.clonedElt = EcoreFactoryImpl.eINSTANCE.createEReference
