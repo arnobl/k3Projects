@@ -1,10 +1,11 @@
 package fr.inria.triskell.mmAnalysis
 
-import fr.inria.triskell.k3.Aspect
-import fr.inria.triskell.k3.OverrideAspectMethod
+import fr.inria.diverse.k3.al.annotationprocessor.Aspect
+import fr.inria.diverse.k3.al.annotationprocessor.OverrideAspectMethod
 import java.io.IOException
 import java.nio.charset.Charset
 import java.nio.file.DirectoryStream
+import java.nio.file.FileAlreadyExistsException
 import java.nio.file.FileSystems
 import java.nio.file.Files
 import java.nio.file.Path
@@ -42,12 +43,41 @@ class MMAnalysis{
 //		val errFolder = "/home/ablouin/data/dev/metamodels/v2/metamodels/sample2-notloadable/"
 //		val nonValidFolder = "/media/data/dev/metamodels/v2/metamodels/sample1-remaining/notValid"
 		val DirectoryStream<Path> ds = Files.newDirectoryStream(FileSystems.getDefault().getPath("/home/ablouin/data/dev/metamodels/v2/metamodels/metamodels-sample1"))
-		ds.forEach[file | analyseDir(ctx, file)	]
+		ds.forEach[file | analyseDirTest(ctx, file, false)	]
 		ds.close
 //		println(ctx)
 //		ctx.write
 	}
 	
+	static val testStr = ".tests" // "tests" ".test" ".test" "test" ".test." ".tests"
+	
+	// latest, finitestate, 
+	
+		def void analyseDirTest(ContextAnalysis ctx, Path file, boolean mustMove) {
+		if(mustMove || file.toString.split("/").last.toLowerCase.endsWith(testStr)) { // .endsWith(".test") .contains(testStr) .equals(testStr)
+			// move
+//			println(file.toString.split("/").last.toLowerCase)
+			val str = file.parent.toString.replace("/metamodels-sample1/", "/sample4-test/")
+			Files.createDirectories(FileSystems.getDefault.getPath(str))
+			try{
+				Files.move(file, FileSystems.getDefault.getPath(str, file.fileName.toString))
+			}catch(FileAlreadyExistsException e) {
+				println(file)
+//				if(Files.isDirectory(file)) {
+//					val DirectoryStream<Path> ds = Files.newDirectoryStream(file)
+//					ds.forEach[f | analyseDirTest(ctx, f, true)]
+//					ds.close
+//				}
+			}
+		}
+		else {
+			if(Files.isDirectory(file)) {
+				val DirectoryStream<Path> ds = Files.newDirectoryStream(file)
+				ds.forEach[f | analyseDirTest(ctx, f, false)]
+				ds.close
+			}
+		}
+	}
 	
 	def void analyseDir(ContextAnalysis ctx, Path file) {
 		if(Files.isDirectory(file)) {
