@@ -22,8 +22,10 @@ import org.eclipse.emf.ecore.EPackage
 import org.eclipse.emf.ecore.EcorePackage
 import org.eclipse.emf.ecore.resource.Resource
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl
-import org.eclipse.emf.ecore.util.Diagnostician
 import org.eclipse.emf.ecore.xmi.impl.EcoreResourceFactoryImpl
+
+import static extension fr.inria.triskell.mmAnalysis.EPackageAspect.*
+import java.util.Map
 
 class MMAnalysis{
 	public def run() {
@@ -43,10 +45,10 @@ class MMAnalysis{
 //		val errFolder = "/home/ablouin/data/dev/metamodels/v2/metamodels/sample2-notloadable/"
 //		val nonValidFolder = "/media/data/dev/metamodels/v2/metamodels/sample1-remaining/notValid"
 		val DirectoryStream<Path> ds = Files.newDirectoryStream(FileSystems.getDefault().getPath("/home/ablouin/data/dev/metamodels/v2/metamodels/metamodels-sample1"))
-		ds.forEach[file | analyseDirTest(ctx, file, false)	]
+		ds.forEach[file | analyseDir(ctx, file)	]
 		ds.close
 //		println(ctx)
-//		ctx.write
+		ctx.write
 	}
 	
 	static val testStr = ".tests" // "tests" ".test" ".test" "test" ".test." ".tests"
@@ -90,24 +92,26 @@ class MMAnalysis{
 				val rs = new ResourceSetImpl()
 				val res = rs.getResource(uri, true)
 				ctx.nextMetamodel(file.fileName.toString)
-//				res.contents.filter(typeof(EPackage)).forEach[count(ctx)]
-				res.contents.filter(typeof(EPackage)).forEach[p | 
-					try {
-					Diagnostician.INSTANCE.validate(p)
-					}catch(Exception e) {
-						println("NOT VALID>>>> " +file.toString)
-						val str = file.parent.toString.replace("/metamodels-sample1/", "/sample3-notValid/")
-						Files.createDirectories(FileSystems.getDefault.getPath(str))
-						Files.move(file, FileSystems.getDefault.getPath(str, file.fileName.toString))
-//							ctx.incrNonValidMM
-					}
-				]
-					println("OK>>>"+file.fileName.toString)
-	//				ctx.writeDataMM
+				res.contents.filter(typeof(EPackage)).forEach[count(ctx)]
+//				res.contents.filter(typeof(EPackage)).forEach[p | 
+//					try {
+//					Diagnostician.INSTANCE.validate(p)
+//					}catch(Exception e) {
+//						println("NOT VALID>>>> " +file.toString)
+//						val str = file.parent.toString.replace("/metamodels-sample1/", "/sample3-notValid/")
+//						Files.createDirectories(FileSystems.getDefault.getPath(str))
+//						Files.move(file, FileSystems.getDefault.getPath(str, file.fileName.toString))
+////							ctx.incrNonValidMM
+//					}
+//				]
+//					println("OK>>>"+file.fileName.toString)
+					ctx.writeDataMM
 				res.unload
+//				ctx.checkEmpty
+//				ctx.onEndMetamodel
 			}catch(Exception e) {
-	//				println("ERR>>>"+file.fileName.toString)
-//				val str = file.parent.toString.replace("/metamodels-sample1/", "/sample3-notValid/")
+				println("ERR>>>"+file.fileName.toString)
+//				val str = file.parent.toString.replace("/metamodels-sample1/", "/sample5-redundant/")
 //				println(str)
 //				Files.createDirectories(FileSystems.getDefault.getPath(str))
 //				Files.move(file, FileSystems.getDefault.getPath(str, file.fileName.toString))
@@ -124,6 +128,7 @@ class MMAnalysis{
 
 
 class ContextAnalysis {
+	val Map<String,String> mms = newHashMap()
 	protected var String currentMM
 	protected var double nbClasses = 0
 	protected var double nbPackages = 0
@@ -161,6 +166,22 @@ class ContextAnalysis {
 	}
 	
 	
+	public def void checkEmpty() {
+		if(nbClasses==0 && nbDataTypes==0 && nbEnums==0)
+			throw new IllegalArgumentException
+	}
+	
+	public def void onEndMetamodel() {
+		val String ident = nbClasses + " " + nbPackages + " " + nbDataTypes + " " + nbReferences + " " + nbAttr + " " + nbOperations + " " +
+			nbEnums + " " + nbEnumsLiteral
+		val otherName = mms.get(ident)
+		if(otherName!=null && Utils::LevenshteinDistance(currentMM.toLowerCase, otherName.toLowerCase)<4) {
+			throw new IllegalArgumentException
+		}
+		mms.put(ident, currentMM)
+	}
+	
+	
 	public def void writeDataClass(EClass clazz) {
 		nbClasses = nbClasses + 1
 		nbAttr = nbAttr + clazz.EAllAttributes.size
@@ -182,9 +203,9 @@ class ContextAnalysis {
 	public def void writeDataMM() {
 		nbMetamodels = nbMetamodels + 1
 		
-		dataMM.append(currentMM).append(t).append(nbPackages).append(t).append(nbClasses).append(t).append(nbDataTypes).append(t).
-		append(nbReferences).append(t).append(nbAttr).append(t).append(nbOperations).append(t).append(nbEnums).append(t).
-		append(nbEnumsLiteral).append(t).append(nbFactories).append(t).append(eol)
+		dataMM.append(currentMM).append(t).append(nbPackages.intValue).append(t).append(nbClasses.intValue).append(t).append(nbDataTypes.intValue).append(t).
+		append(nbReferences.intValue).append(t).append(nbAttr.intValue).append(t).append(nbOperations.intValue).append(t).append(nbEnums.intValue).append(t).
+		append(nbEnumsLiteral.intValue).append(t).append(nbFactories.intValue).append(t).append(eol)
 	}
 	
 	
