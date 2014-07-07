@@ -43,6 +43,7 @@ class ModelDownloader {
 			
 			if(subsetNsRes==-1) {
 				println("ERROR " + url + "\n" + page.join("\n"))
+				nbPages = 0
 			}
 			else {
 				nbPages = getNbPages(subsetNsRes)
