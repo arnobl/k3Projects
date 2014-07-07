@@ -1,4 +1,4 @@
-package fr.inria.triskell.mmAnalysis;
+package fr.inria.diverse.mmAnalyser;
 
 public class Utils {
 	public static int LevenshteinDistance(String s0, String s1) {
