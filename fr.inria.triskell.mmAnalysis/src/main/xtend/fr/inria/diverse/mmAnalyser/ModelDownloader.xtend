@@ -16,7 +16,7 @@ class ModelDownloader {
 	
 	val String targetFolder
 	val String extens
-	val static url1 = 'https://github.com/search?type=Code&ref=searchresults&q=xmi+extension%3A'
+	val static url1 = 'https://github.com/search?type=Code&s=indexed&ref=searchresults&q=xmi+extension:'
 	val static nbRes = 'code results'
 	val static maxRes = 1000
 	val int nbTotalRes
@@ -31,8 +31,9 @@ class ModelDownloader {
 		var page = Utils::readWebPage(url)
 		nbTotalRes = getNbResults(page)
 		var subsetNsRes = nbTotalRes
-
-		while(cpt<nbTotalRes && subsetNsRes>0) {
+		var nbPages = 1
+		
+		while(cpt<nbTotalRes && subsetNsRes>0 && nbPages>0) {
 			while(subsetNsRes>maxRes) {
 				url = url1+extens+"+size:"+minSize+".."+maxSize
 				page = Utils::readWebPage(url)
@@ -40,13 +41,14 @@ class ModelDownloader {
 				if(subsetNsRes>maxRes) maxSize /=2
 			}
 			
-			if(nbRes==-1) {
+			if(subsetNsRes==-1) {
 				println("ERROR " + url + "\n" + page.join("\n"))
 			}
 			else {
-				val int nbPages = getNbPages(subsetNsRes)
+				nbPages = getNbPages(subsetNsRes)
 				println(">>>" + maxSize + " " + subsetNsRes + " " + nbPages + " " + url)
-				downloadPages(nbPages, url)
+				if(nbPages>0)
+					downloadPages(nbPages, url)
 			}
 			
 			minSize = maxSize+1
