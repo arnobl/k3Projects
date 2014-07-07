@@ -1,6 +1,50 @@
 package fr.inria.diverse.mmAnalyser;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
+
 public class Utils {
+	public static List<String> readWebPage(String url) {
+		List<String> list = new ArrayList<>();
+		boolean ok = false;
+		
+		while(!ok) {
+			try{
+				URL oracle = new URL(url);
+				try(InputStream is = oracle.openStream()){
+					try(BufferedReader in = new BufferedReader(new InputStreamReader(is))){
+						String inputLine;
+						while ((inputLine = in.readLine()) != null) {
+							list.add(inputLine);
+						}
+						ok = true;
+					}
+				}catch(IOException ex) {
+					if(ex.getMessage().contains("HTTP response code")) {
+						System.out.println("WAITING FOR GITHUB ACCESS");
+						try {
+							Thread.sleep(55000);
+						} catch (InterruptedException e) {
+							System.out.println("cannot sleep");
+							ok = true;
+							e.printStackTrace();
+						}
+					}
+				}
+			}catch(IOException ex) {
+				ex.printStackTrace();
+				ok = true;
+			}
+		}
+		return list;
+	}
+	
+	
 	public static int LevenshteinDistance(String s0, String s1) {
 		int len0 = s0.length()+1;
 		int len1 = s1.length()+1;
