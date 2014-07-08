@@ -11,7 +11,7 @@ import java.util.List
 
 class ModelDownloader {
 	def static void main(String[] args) {
-		new ModelDownloader('uml', "/media/data/dev/testMM2/")
+		new ModelDownloader('genmodel', "/media/data/dev/testMM2/")
 	}
 	
 	val String targetFolder
@@ -42,7 +42,6 @@ class ModelDownloader {
 			}
 			
 			if(subsetNsRes==-1) {
-				println("ERROR " + url + "\n" + page.join("\n"))
 				nbPages = 0
 			}
 			else {
