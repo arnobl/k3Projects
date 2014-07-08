@@ -11,7 +11,7 @@ import java.util.List
 
 class ModelDownloader {
 	def static void main(String[] args) {
-		new ModelDownloader('genmodel', "/media/data/dev/testMM2/")
+		new ModelDownloader('ecore', "/media/data/dev/testMM2/")
 	}
 	
 	val String targetFolder
@@ -51,7 +51,7 @@ class ModelDownloader {
 					downloadPages(nbPages, url)
 			}
 			
-			minSize = maxSize+1
+			minSize = maxSize
 			maxSize *= 10
 			subsetNsRes = Integer.MAX_VALUE
 		}
@@ -103,7 +103,7 @@ class ModelDownloader {
 				}catch(IOException ex) {
 					if(ex.getMessage().contains("HTTP response code")) {
 						System.out.println("WAITING FOR GITHUB ACCESS");
-						try {Thread.sleep(55000);}
+						try {Thread.sleep(50000);}
 						catch(InterruptedException e) {
 							System.out.println("cannot sleep");
 							e.printStackTrace();

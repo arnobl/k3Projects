@@ -28,7 +28,7 @@ public class Utils {
 					if(ex.getMessage().contains("HTTP response code")) {
 						System.out.println("WAITING FOR GITHUB ACCESS");
 						try {
-							Thread.sleep(55000);
+							Thread.sleep(50000);
 						} catch (InterruptedException e) {
 							System.out.println("cannot sleep");
 							ok = true;
