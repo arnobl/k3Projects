@@ -1,25 +1,25 @@
 package fr.inria.diverse.mmAnalyser
 
 import java.io.File
+import java.nio.file.DirectoryNotEmptyException
 import java.nio.file.FileSystems
 import java.nio.file.Files
 import java.nio.file.Path
 import org.eclipse.emf.common.util.URI
+import org.eclipse.emf.ecore.EClass
+import org.eclipse.emf.ecore.EClassifier
+import org.eclipse.emf.ecore.EDataType
+import org.eclipse.emf.ecore.EEnum
+import org.eclipse.emf.ecore.EEnumLiteral
+import org.eclipse.emf.ecore.EFactory
+import org.eclipse.emf.ecore.EModelElement
+import org.eclipse.emf.ecore.EOperation
 import org.eclipse.emf.ecore.EPackage
 import org.eclipse.emf.ecore.EcorePackage
 import org.eclipse.emf.ecore.resource.Resource
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl
 import org.eclipse.emf.ecore.util.Diagnostician
 import org.eclipse.emf.ecore.xmi.impl.EcoreResourceFactoryImpl
-import org.eclipse.emf.ecore.EClassifier
-import org.eclipse.emf.ecore.EModelElement
-import org.eclipse.emf.ecore.EClass
-import org.eclipse.emf.ecore.EOperation
-import org.eclipse.emf.ecore.EDataType
-import org.eclipse.emf.ecore.EEnum
-import org.eclipse.emf.ecore.EEnumLiteral
-import org.eclipse.emf.ecore.EFactory
-import java.nio.file.DirectoryNotEmptyException
 
 class MMProcessor {
 	def static void main(String[] args) {
@@ -56,10 +56,14 @@ class MMProcessor {
 	
 	public def run() {
 		// Registering the ecore namespace
-		val fact = new EcoreResourceFactoryImpl
 		if(!EPackage.Registry.INSTANCE.containsKey(EcorePackage.eNS_URI))
 			EPackage.Registry.INSTANCE.put(EcorePackage.eNS_URI, EcorePackage.eINSTANCE)
-		Resource.Factory.Registry.INSTANCE.getExtensionToFactoryMap.put("ecore", fact)
+		Resource.Factory.Registry.INSTANCE.getExtensionToFactoryMap.put("ecore", new EcoreResourceFactoryImpl)
+		
+//		// Registering the UML namespace
+//		if(!EPackage.Registry.INSTANCE.containsKey(UmlPackage.eNS_URI))
+//			EPackage.Registry.INSTANCE.put(UmlPackage.eNS_URI, UmlPackage.eINSTANCE)
+//		Resource.Factory.Registry.INSTANCE.getExtensionToFactoryMap.put("uml", new XMIResourceFactoryImpl)
 		
 		// Opening the source folder
 		val ctx = new ContextAnalyser
@@ -88,6 +92,20 @@ class MMProcessor {
 				if(pass!=1) {
 					analyseMetamodel(res.contents.filter(typeof(EPackage)), ctx, file)
 				}
+				
+				// UML
+//				val str = targetFolder+File::separator+"notClass"+file.toString.replace(sourceFolder, "")
+//				
+//				if(!res.allContents.exists[elt | elt instanceof uml.Class]) {
+//					Files.createDirectories(FileSystems.getDefault.getPath(str))
+//					Files.move(file, FileSystems.getDefault.getPath(str, file.fileName.toString))
+//				}
+//				
+//				if(res.contents.head==null){
+//					Files.createDirectories(FileSystems.getDefault.getPath(str))
+//					Files.move(file, FileSystems.getDefault.getPath(str, file.fileName.toString))
+//					println("empty!!")
+//				}
 			}catch(Exception ex) {
 				if(pass==1) {
 					passNotLoadable(file)
