@@ -1,10 +1,13 @@
 package fr.inria.diverse.mmAnalyser
 
 import java.io.File
+import java.io.FileInputStream
 import java.nio.file.DirectoryNotEmptyException
 import java.nio.file.FileSystems
 import java.nio.file.Files
 import java.nio.file.Path
+import java.util.Set
+import org.apache.commons.codec.digest.DigestUtils
 import org.eclipse.emf.common.util.URI
 import org.eclipse.emf.ecore.EClass
 import org.eclipse.emf.ecore.EClassifier
@@ -23,7 +26,7 @@ import org.eclipse.emf.ecore.xmi.impl.EcoreResourceFactoryImpl
 
 class MMProcessor {
 	def static void main(String[] args) {
-		new MMProcessor("/media/data/dev/testMM/metamodels", "/media/data/dev/testMM/", 6, true).run
+		new MMProcessor("/media/data/dev/testMM/metamodels", "/media/data/dev/testMM/", 5, true).run
 	}
 	
 	public static val String ecoreExt = '.ecore'
@@ -125,7 +128,7 @@ class MMProcessor {
 			case 2: passNotValid(mm, file)
 			case 3: passTest(file)
 			case 4: passEmptyToy(mm, ctx, file)
-			case 5: passDuplicated(mm, ctx, file)
+			case 5: passDuplicatedCheckSum(mm, ctx, file)
 			case 6: passAnalyseMM(mm, ctx, true)
 		}
 	}
@@ -260,17 +263,35 @@ class MMProcessor {
 	}
 	
 	
-	private def void passDuplicated(Iterable<EPackage> mm, ContextAnalyser ctx, Path file) {
-		passAnalyseMM(mm, ctx, false)
-		try {
-			ctx.onEndMetamodelCheckDuplicate
-		}catch(IllegalArgumentException ex) {
-			println("DUPLICATE: " +file)
-			val str = targetFolder+File::separator+"sample6-duplicated"+file.toString.replace(sourceFolder, "")
-			Files.createDirectories(FileSystems.getDefault.getPath(str))
-			Files.move(file, FileSystems.getDefault.getPath(str, file.fileName.toString))
-		}
+	val Set<String> checksums = newHashSet
+		
+	private def void passDuplicatedCheckSum(Iterable<EPackage> mm, ContextAnalyser ctx, Path file) {
+		try{
+			val fis = new FileInputStream(file.toFile)
+			val md5 = DigestUtils::md5Hex(fis)
+			if(checksums.contains(md5)) {
+				println("DUPLICATE: " + md5 +" "   +file)
+				val str = targetFolder+File::separator+"sample6-duplicated"+file.toString.replace(sourceFolder, "")
+				Files::createDirectories(FileSystems::getDefault.getPath(str))
+				Files::move(file, FileSystems::getDefault.getPath(str, file.fileName.toString))
+			}
+			else checksums.add(md5)
+			fis.close
+		}catch(Exception ex){}
 	}
+	
+	
+//	private def void passDuplicated(Iterable<EPackage> mm, ContextAnalyser ctx, Path file) {
+//		passAnalyseMM(mm, ctx, false)
+//		try {
+//			ctx.onEndMetamodelCheckDuplicate
+//		}catch(IllegalArgumentException ex) {
+//			println("DUPLICATE: " +file)
+//			val str = targetFolder+File::separator+"sample6-duplicated"+file.toString.replace(sourceFolder, "")
+//			Files.createDirectories(FileSystems.getDefault.getPath(str))
+//			Files.move(file, FileSystems.getDefault.getPath(str, file.fileName.toString))
+//		}
+//	}
 	
 	
 	private def void removeEmptyFolders(Path path) {

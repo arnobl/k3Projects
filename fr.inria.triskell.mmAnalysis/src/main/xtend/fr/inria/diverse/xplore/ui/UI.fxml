@@ -5,10 +5,10 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 
-<BorderPane maxHeight="50000.0" maxWidth="50000.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="fr.inria.diverse.xplore.ui.MMController">
+<BorderPane maxHeight="50000.0" maxWidth="50000.0" prefHeight="705.0" prefWidth="1085.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="fr.inria.diverse.xplore.ui.MMController">
 <center><TabPane maxHeight="50000.0" maxWidth="50000.0" prefHeight="426.0" prefWidth="602.0" tabClosingPolicy="UNAVAILABLE" xmlns:fx="http://javafx.com/fxml">
   <tabs>
-    <Tab text="Metamodel">
+    <Tab text="Metamodels">
       <content>
         <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
 <children><Button id="mmfolder" fx:id="mmfolder" layoutX="14.207763671875" layoutY="14.0" mnemonicParsing="false" onAction="#onClickMMFolder" text="Load" /><TreeView id="mmList" fx:id="mmList" layoutX="7.0" layoutY="50.0" prefHeight="200.0" prefWidth="500.0" AnchorPane.bottomAnchor="0.0" AnchorPane.topAnchor="50.0" /><TextField fx:id="searchField" layoutX="147.0" layoutY="14.0" onKeyReleased="#onSearchOnMM" /><Text layoutX="93.0" layoutY="32.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Search:" />
@@ -20,7 +20,7 @@
                 <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
               </content>
             </Tab>
-    <Tab text="Model">
+    <Tab text="Models">
       <content>
         <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
 <children><Button fx:id="modelsfolder" layoutX="14.41552734375" layoutY="14.0" mnemonicParsing="false" onAction="#onClickModelsFolder" text="Load" />
