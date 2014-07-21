@@ -11,37 +11,42 @@ import java.util.List
 
 class ModelDownloader {
 	def static void main(String[] args) {
-		new ModelDownloader('ecore', "/media/data/dev/testMM2/")
+		//ecore xmi, atl rule, xmi UML
+		new ModelDownloader('xmi', 'xml', "/media/data/dev/testMM2/")
 	}
 	
 	val String targetFolder
 	val String extens
-	val static url1 = 'https://github.com/search?type=Code&s=indexed&ref=searchresults&q=xmi+extension:'
+	val String keyword
+	val static url1 = 'https://github.com/search?type=Code&s=indexed&ref=searchresults&q='
+	val static url2 = '+extension:'
 	val static nbRes = 'code results'
 	val static maxRes = 1000
 	val int nbTotalRes
 	var cpt = 0
 		
-	new(String ext, String targetFolder) {
+	new(String ext, String keyword, String targetFolder) {
 		this.targetFolder = targetFolder
 		this.extens = ext
+		this.keyword = keyword
 		var maxSize = 1000
 		var minSize = 0
-		var url = url1+extens
+		var url = url1+keyword+url2+extens
 		var page = Utils::readWebPage(url)
 		nbTotalRes = getNbResults(page)
 		var subsetNsRes = nbTotalRes
 		var nbPages = 1
-		
+
 		while(cpt<nbTotalRes && subsetNsRes>0 && nbPages>0) {
-			while(subsetNsRes>maxRes) {
-				url = url1+extens+"+size:"+minSize+".."+maxSize
+			while(subsetNsRes>maxRes && minSize<maxSize) {
+				url = url1+keyword+url2+extens+"+size:"+minSize+".."+maxSize
 				page = Utils::readWebPage(url)
 				subsetNsRes = getNbResults(page)
-				if(subsetNsRes>maxRes) maxSize /=2
+				if(subsetNsRes>maxRes) maxSize = (minSize+maxSize)/2
 			}
 			
 			if(subsetNsRes==-1) {
+				println("NB PAGES 0!!" + url + " " + page)
 				nbPages = 0
 			}
 			else {

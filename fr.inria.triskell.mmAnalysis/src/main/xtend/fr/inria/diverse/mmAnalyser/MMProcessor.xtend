@@ -26,7 +26,7 @@ class MMProcessor {
 		new MMProcessor("/media/data/dev/testMM/metamodels", "/media/data/dev/testMM/", 6, true).run
 	}
 	
-	
+	public static val String ecoreExt = '.ecore'
 	val String targetFolder
 	val String sourceFolder
 	val Path targetPath
