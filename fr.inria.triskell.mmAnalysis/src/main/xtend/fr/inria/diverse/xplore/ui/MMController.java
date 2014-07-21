@@ -26,7 +26,6 @@ import javafx.stage.DirectoryChooser;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
-import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
@@ -131,18 +130,32 @@ public class MMController implements Initializable{
 			root.clear();
 			models.forEach(mm -> {
 				try {
-					Document document = builder.parse(mm.toFile());
-					NodeList nl = document.getChildNodes();
-					if(nl.getLength()>0 && nl.item(0).getAttributes()!=null) {
+					NodeList nl = builder.parse(mm.toFile()).getChildNodes();
+					
+					if(nl.getLength()>0) {
+						final Node firstRoot = nl.item(0);
+						Node rootNode =  firstRoot;
 						Node nsURINode = null;
 						
 						if(metamodel) {
-							nsURINode = nl.item(0).getAttributes().getNamedItem("nsURI");
+							if(rootNode.getAttributes()!=null)
+								nsURINode = rootNode.getAttributes().getNamedItem("nsURI");
 						}else {
-							String[] names = nl.item(0).getNodeName().split(":");
+							if(rootNode.getNodeName().equalsIgnoreCase("xmi:xmi") || rootNode.getNodeName().equalsIgnoreCase("xmi")) {
+								boolean ok = false;
+								NodeList rootChildren = rootNode.getChildNodes();
+								for(int i=0, size=rootChildren.getLength(); i<size && !ok; i++) {
+									if(rootChildren.item(i).getNodeType()!=Node.TEXT_NODE) {
+										ok = true;
+										rootNode = rootChildren.item(i);
+										rootChildren = rootNode.getChildNodes();
+									}
+								}
+							}
+							String[] names = rootNode.getNodeName().split(":");
 							switch(names.length) {
-							case 1: nsURINode = nl.item(0).getAttributes().getNamedItem("xmlns"); break;
-							case 2: nsURINode = nl.item(0).getAttributes().getNamedItem("xmlns:"+names[0]); break;
+								case 1: nsURINode = firstRoot.getAttributes().getNamedItem("xmlns"); break;
+								case 2: nsURINode = firstRoot.getAttributes().getNamedItem("xmlns:"+names[0]); break;
 							}
 						}
 						
