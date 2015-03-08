@@ -9,6 +9,19 @@
 
   <name>fr.inria.diverse.mmAnalysis</name>
 
+	<repositories>
+		<repository>
+		     <id>mavenInriaSnapshot</id>
+		     <name>http://maven.inria.fr-snapshots</name>
+		     <url>http://maven.inria.fr/artifactory/public-snapshot</url>
+		 </repository>
+		<repository>
+		     <id>mavenInriaRelease</id>
+		     <name>http://maven.inria.fr-releases</name>
+		     <url>http://maven.inria.fr/artifactory/public-release</url>
+		 </repository>
+	</repositories>
+
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<xtend.version>2.6.2</xtend.version>
@@ -69,11 +82,16 @@
 			<artifactId>org.eclipse.emf.common</artifactId>
 			<version>[2.9,)</version>
 		</dependency>
-<!-- 		<dependency> -->
-<!-- 			<groupId>commons-io</groupId> -->
-<!-- 			<artifactId>commons-io</artifactId> -->
-<!-- 			<version>2.4</version> -->
-<!-- 		</dependency> -->
+		<dependency>
+			<groupId>org.eclipse.core</groupId>
+			<artifactId>org.eclipse.core.resources</artifactId>
+			<version>3.7.100</version>
+		</dependency>
+		<dependency>
+			<groupId>commons-io</groupId>
+			<artifactId>commons-io</artifactId>
+			<version>2.4</version>
+		</dependency>
 		<dependency>
 			<groupId>commons-codec</groupId>
 			<artifactId>commons-codec</artifactId>

@@ -111,7 +111,7 @@ class MMProcessor {
 //				}
 			}catch(Exception ex) {
 				if(pass==1) {
-					passNotLoadable(file)
+					passNotLoadable(file, sourceFolder, targetFolder)
 				}else
 					ex.printStackTrace
 			}
@@ -198,11 +198,11 @@ class MMProcessor {
 	}
 	
 		
-	private def void passNotLoadable(Path file) {
-		println("NOT LOADABLE: " + file)
-		val str = targetFolder+File::separator+"sample2-notLoadable"+file.toString.replace(sourceFolder, "")
-		Files.createDirectories(FileSystems.getDefault.getPath(str))
-		Files.move(file, FileSystems.getDefault.getPath(str, file.fileName.toString))
+	public static def void passNotLoadable(Path file, String sourceFolder, String targetFolder) {
+		val str = targetFolder+File::separatorChar+file.toString.split("\\.").last+"sample2-notLoadable"+file.toString.replace(sourceFolder, "")
+		println("NOT LOADABLE: " + file + " move to: " + str)
+//		Files.createDirectories(FileSystems.getDefault.getPath(str))
+//		Files.move(file, FileSystems.getDefault.getPath(str, file.fileName.toString))
 	}
 	
 	
