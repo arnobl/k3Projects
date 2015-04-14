@@ -85,7 +85,7 @@ public class MMController implements Initializable{
 			}
 		});
 		
-		searchField.setOnKeyPressed(evt -> mmList.setRoot(searchField.getText().length()==0?defaultRoot:getSearchedTree(searchField.getText())));
+		searchField.setOnKeyReleased(evt -> mmList.setRoot(searchField.getText().length()==0?defaultRoot:getSearchedTree(searchField.getText())));
 		
 		modelsfolder.setOnAction(evt -> {
 			modelsDir = getFileChooser(false).showDialog(null);
